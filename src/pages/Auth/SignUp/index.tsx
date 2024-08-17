@@ -65,7 +65,7 @@ const SignUp = () => {
   });
 
   return (
-    <div className="m-10 h-full">
+    <div className="m-10 h-full min-h-screen">
       <div className="flex flex-row">
         <div className="flex flex-col w-1/2 m-10">
           <h1 className="text-7xl font-bold text-[#22543D] mb-8">
@@ -81,13 +81,21 @@ const SignUp = () => {
             hendrerit suspendisse eros.
           </p>
           <div>
-            <p className="bg-[#22543D] text-white"><GoCommentDiscussion/></p>
-            <p className="bg-[#22543D] text-white"><IoPeopleCircleSharp /></p>
-            <p className="bg-[#22543D] text-white"><FaBookOpen /></p>
-            <p className="bg-[#22543D] text-white"><BsNewspaper /></p>
+            <p className="bg-[#22543D] text-white">
+              <GoCommentDiscussion />
+            </p>
+            <p className="bg-[#22543D] text-white">
+              <IoPeopleCircleSharp />
+            </p>
+            <p className="bg-[#22543D] text-white">
+              <FaBookOpen />
+            </p>
+            <p className="bg-[#22543D] text-white">
+              <BsNewspaper />
+            </p>
           </div>
         </div>
-        <div className="m-10 bg-[#22543D] flex-col w-1/2 rounded-md">
+        <div className="m-10 bg-[#22543D] flex-col w-1/2 rounded-md px-4">
           <div className="m-10 sm:mx-auto sm:w-full sm:max-w-sm">
             <div className="text-center text-2xl font-bold text-white">
               Sign Up

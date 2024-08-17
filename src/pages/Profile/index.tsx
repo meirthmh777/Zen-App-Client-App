@@ -13,9 +13,10 @@ import { API_BASE } from "@/lib/projectApi";
 
 import consultationOngoing from "@/data/consultationOngoing.json";
 import consulationHistory from "@/data/consultationHistory.json";
-import FeedbackModal from '@/components/profile/editModal';
+import FeedbackModal from "@/components/profile/editModal";
 import EditModal from "@/components/profile/editModal";
 import Link from "next/link";
+import { useRouter } from "next/router";
 
 export interface DataPairProps {
   label: string;
@@ -46,9 +47,9 @@ const dateFormat: Intl.DateTimeFormatOptions = {
 
 export default function ProfilePage() {
   const [userData, setUserData] = useState<any>(null);
-  const { currentUser } = useContext(AppContext);
+  const { currentUser, setCurrentUser } = useContext(AppContext);
   const [isModalVisible, setModalVisible] = useState(false);
-
+  const router = useRouter();
   const toggleModal = () => {
     setModalVisible(!isModalVisible);
   };
@@ -56,7 +57,9 @@ export default function ProfilePage() {
   useEffect(() => {
     const fetchUserData = async () => {
       try {
-        const response = await axios.get(`${API_BASE}/user_details/${currentUser?.account_id}`);
+        const response = await axios.get(
+          `${API_BASE}/user_details/${currentUser?.account_id}`
+        );
         const data = response.data.data;
         setUserData({
           email: data.account.email,
@@ -75,15 +78,22 @@ export default function ProfilePage() {
   const handleSave = async (updatedData: any) => {
     try {
       const { email, ...dataToUpdate } = updatedData;
-      await axios.put(`${API_BASE}/user_details/${currentUser?.account_id}`, updatedData);
-      setUserData((prevData: any) => prevData ? {
-        ...prevData,
-        ...dataToUpdate,
-      } : {
-        email,
-        ...dataToUpdate,
-      });
-  
+      await axios.put(
+        `${API_BASE}/user_details/${currentUser?.account_id}`,
+        updatedData
+      );
+      setUserData((prevData: any) =>
+        prevData
+          ? {
+              ...prevData,
+              ...dataToUpdate,
+            }
+          : {
+              email,
+              ...dataToUpdate,
+            }
+      );
+
       setModalVisible(false);
       setModalVisible(false);
     } catch (error) {
@@ -94,6 +104,11 @@ export default function ProfilePage() {
   if (!userData) {
     return <p>Loading...</p>;
   }
+  const LogOut = () => {
+    setCurrentUser(null);
+    localStorage.removeItem("currentUser");
+    router.push("/");
+  };
 
   return (
     <>
@@ -101,20 +116,18 @@ export default function ProfilePage() {
       <div className="flex flex-col lg:flex-row lg:mx-24 mx-12">
         {/* notif bar on mobile */}
         <div className="lg:hidden flex gap-3 text-white font10-semibold justify-around text-2xl py-3 bg-darkGreen rounded-md mx-3">
-          
           <Link href={"/Profile/post"}>
             <FaRegComment />
           </Link>
           <Link href={"/Profile/bookmark"}>
             <FaRegBookmark />
-          </Link> 
-          <Link href={"/Profile/like"} >
+          </Link>
+          <Link href={"/Profile/like"}>
             <AiOutlineLike />
           </Link>
           <Link href={"/Profile/notification"}>
             <IoNotificationsOutline />
           </Link>
-          
         </div>
 
         {/* profile data left */}
@@ -177,8 +190,14 @@ export default function ProfilePage() {
           </div>
           {/* button edit delete */}
           <div className="flex flex-row justify-end gap-3 text-slate-50 mt-3">
-            <button onClick={toggleModal} className="bg-teal-600 rounded-xl p-1 px-5">
+            <button
+              onClick={toggleModal}
+              className="bg-teal-600 rounded-xl p-1 px-5"
+            >
               Edit
+            </button>
+            <button onClick={LogOut} className="bg-red-400 rounded-xl p-1 px-5">
+              Logout
             </button>
           </div>
           {isModalVisible && (
@@ -195,20 +214,18 @@ export default function ProfilePage() {
         <div className="bg-teal-900 rounded-md p-3 pb-10 m-3">
           {/* notif bar on desktop */}
           <div className="hidden lg:flex gap-3 text-white w-full font-semibold justify-around text-2xl py-3">
-            
             <Link href={"/Profile/post"}>
               <FaRegComment />
             </Link>
             <Link href={"/Profile/bookmark"}>
               <FaRegBookmark />
-            </Link> 
-            <Link href={"/Profile/like"} >
+            </Link>
+            <Link href={"/Profile/like"}>
               <AiOutlineLike />
             </Link>
             <Link href={"/Profile/notification"}>
               <IoNotificationsOutline />
             </Link>
-           
           </div>
           {/* consulation bar */}
           <div>
@@ -220,9 +237,13 @@ export default function ProfilePage() {
             </div>
             {/* ongoing consultation */}
             <div className="text-white bg-lightGreen rounded-md px-5 py-7">
-              <h3 className="font-semibold text-xl mb-5">Ongoing Consultation</h3>
+              <h3 className="font-semibold text-xl mb-5">
+                Ongoing Consultation
+              </h3>
               <div>
-                <table className={`${style.table} bg-mocca text-xs sm:text-base`}>
+                <table
+                  className={`${style.table} bg-mocca text-xs sm:text-base`}
+                >
                   <thead>
                     <tr>
                       <th>Date of Consultation</th>
@@ -234,7 +255,10 @@ export default function ProfilePage() {
                     {consultationOngoing.map((item) => (
                       <tr key={item.id}>
                         <td>
-                          {new Date(item.date).toLocaleDateString("en-US", dateFormat)}
+                          {new Date(item.date).toLocaleDateString(
+                            "en-US",
+                            dateFormat
+                          )}
                         </td>
                         <td>{item.psychologist}</td>
                         <td>{item.details}</td>
@@ -246,9 +270,13 @@ export default function ProfilePage() {
             </div>
             {/* consultation history */}
             <div className="text-white bg-lightGreen mt-5 rounded-md px-5 py-7">
-              <h3 className="font-semibold text-xl mb-5">Consultation Histories</h3>
+              <h3 className="font-semibold text-xl mb-5">
+                Consultation Histories
+              </h3>
               <div>
-                <table className={`${style.table} bg-mocca text-xs sm:text-base`}>
+                <table
+                  className={`${style.table} bg-mocca text-xs sm:text-base`}
+                >
                   <thead>
                     <tr>
                       <th>Date of Consultation</th>
@@ -260,7 +288,10 @@ export default function ProfilePage() {
                     {consulationHistory.map((item) => (
                       <tr key={item.id}>
                         <td>
-                          {new Date(item.date).toLocaleDateString("en-US", dateFormat)}
+                          {new Date(item.date).toLocaleDateString(
+                            "en-US",
+                            dateFormat
+                          )}
                         </td>
                         <td>{item.psychologist}</td>
                         <td>{item.details}</td>
